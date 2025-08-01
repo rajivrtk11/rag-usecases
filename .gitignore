@@ -1,0 +1,68 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment (your local Python env)
+venv/
+ENV/
+env/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# dotenv environment files (API keys etc.)
+.env
+.env.*
+
+# VSCode settings
+.vscode/
+
+# Mac OS system files
+.DS_Store
+
+# Logs and local output
+*.log
+
+# Cache files
+.cache/
+*.pyc
+*.pyo
+*.pyd
+
+# Output from LangChain/Transformers
+*.db
+*.faiss
+*.pkl
+*.jsonl
+
+# Pipenv / Poetry
+Pipfile.lock
+poetry.lock
+
+# MyPy / Pyright / other linters
+.mypy_cache/
+.pyright/
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+coverage.xml
+*.cover
+*.py,cover
+.cache
+.noseids
+*.log
+
+# Jupyter Notebook local runtime
+.local/
+
+# Compiled C extensions
+*.so
+
+# Backup files
+*~
+*.bak
