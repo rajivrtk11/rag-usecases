@@ -1,0 +1,13 @@
+# Core dependencies for sample RAG project
+python-dotenv
+langchain
+langchain-google-genai
+langchain-community
+langchain-text-splitters
+faiss-cpu
+sentence-transformers
+transformers
+torch
+numpy
+pandas
+scikit-learn
