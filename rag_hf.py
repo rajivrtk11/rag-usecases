@@ -24,7 +24,7 @@ embedding_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 # --- Vector Store ---
 vectorstore = FAISS.from_documents(splits, embedding_model)
 retriever = vectorstore.as_retriever()
-vectorstore.save_local("sql_faiss_index")
+# vectorstore.save_local("sql_faiss_index")
 
 # --- LLM ---
 llm = ChatGoogleGenerativeAI(model="models/gemini-1.5-flash", temperature=0.5)

@@ -14,7 +14,6 @@ env/
 
 # dotenv environment files (API keys etc.)
 .env
-.env.*
 
 # VSCode settings
 .vscode/
@@ -66,3 +65,5 @@ coverage.xml
 # Backup files
 *~
 *.bak
+
+sql_faiss_index/
