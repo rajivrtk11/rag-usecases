@@ -9,7 +9,7 @@ from langchain.chains import RetrievalQA
 
 # Load environment variables
 load_dotenv()
-GOOGLE_API_KEY = os.environ["GEMINI_API_KEY"]
+GOOGLE_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # --- Load and Split Documents from PDF ---
 loader = PyPDFLoader("rok-hjp-survind-kumar.pdf")  # Change your filename here
