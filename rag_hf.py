@@ -1,58 +1,60 @@
+import fitz  # PyMuPDF
+import base64
 import os
-from dotenv import load_dotenv
-from langchain.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import CharacterTextSplitter
-from langchain.chains import RetrievalQA
+from PIL import Image
+from io import BytesIO
 
-# --- Load environment variables ---
-load_dotenv()
-GOOGLE_API_KEY = os.getenv("GEMINI_API_KEY")
+from langchain_core.messages import HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-if not GOOGLE_API_KEY:
-    raise ValueError("❌ GEMINI_API_KEY not found in environment variables.")
-
-# --- Load and Split Documents from PDF ---
-loader = PyPDFLoader("rok-hjp-survind-kumar.pdf")
-docs = loader.load()
-
-text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-splits = text_splitter.split_documents(docs)
-
-# --- Embedding Model (explicitly pass API key) ---
-embedding_model = GoogleGenerativeAIEmbeddings(
-    model="models/embedding-001",
-    google_api_key=GOOGLE_API_KEY
+# Load Gemini Pro Vision
+vision_llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash-lite",
+    api_key=os.getenv("GEMINI_API_KEY"),
+    temperature=0.2,
+    convert_system_message_to_human=True
 )
 
-# --- Vector Store ---
-vectorstore = FAISS.from_documents(splits, embedding_model)
-retriever = vectorstore.as_retriever()
-# vectorstore.save_local("sql_faiss_index")
+def encode_image_to_base64_data_uri(image: Image.Image) -> str:
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    img_base64 = base64.b64encode(buffered.getvalue()).decode()
+    return f"data:image/png;base64,{img_base64}"
 
-# --- LLM ---
-llm = ChatGoogleGenerativeAI(
-    model="models/gemini-1.5-flash",
-    temperature=0.5,
-    google_api_key=GOOGLE_API_KEY  # ✅ Also pass the key here
-)
+def extract_text_and_images_from_pdf(pdf_path: str):
+    doc = fitz.open(pdf_path)
+    results = []
 
-# --- Prompt Template ---
-prompt = ChatPromptTemplate.from_template(
-    "Use the following context to answer the question:\n\n{context}\n\nQuestion: {question}"
-)
+    for page_num in range(len(doc)):
+        page = doc[page_num]
+        text = page.get_text()
+        images = []
 
-# --- RAG Chain ---
-rag_chain = RetrievalQA.from_chain_type(
-    llm=llm,
-    retriever=retriever,
-    return_source_documents=True,
-)
+        for img_index, img in enumerate(page.get_images(full=True)):
+            xref = img[0]
+            base_image = doc.extract_image(xref)
+            image_bytes = base_image["image"]
+            image = Image.open(BytesIO(image_bytes)).convert("RGB")
+            image_data_uri = encode_image_to_base64_data_uri(image)
+            images.append(image_data_uri)
 
-# --- Run RAG ---
-query = "Give me passenger details and journey information"
-response = rag_chain.invoke({"query": query})
-print("\n💬 Final Answer:\n")
-print(response["result"])
+        # Send both text and images to Gemini Vision
+        response = vision_llm.invoke([
+            HumanMessage(content=[
+                {"type": "text", "text": f"Extract information from this PDF page:\n{text}"},
+                *[
+                    {"type": "image_url", "image_url": image_data_uri}
+                    for image_data_uri in images
+                ]
+            ])
+        ])
+
+        print(f"\n--- Page {page_num + 1} ---")
+        print(response.content)
+        results.append(response.content)
+
+    return results
+
+if __name__ == "__main__":
+    pdf_path = "IPCC_AR6_SYR_SPM.pdf"  # Replace with your actual PDF path
+    extract_text_and_images_from_pdf(pdf_path)
