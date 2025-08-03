@@ -1,7 +1,0 @@
-Artificial Intelligence (AI) is a branch of computer science that aims to create systems capable of performing tasks that normally require human intelligence. These include tasks such as understanding natural language, recognizing patterns, solving problems, and making decisions.
-
-Machine learning, a subset of AI, uses algorithms and statistical models to enable systems to improve their performance on a task through experience. Deep learning, a subfield of machine learning, uses neural networks with many layers to analyze various forms of data.
-
-Large Language Models (LLMs), such as GPT and Claude, are AI models trained on massive text datasets. They can generate human-like text and are used in applications like chatbots, summarization, translation, and more.
-
-Retrieval-Augmented Generation (RAG) is a technique that combines document retrieval with LLMs to improve answer accuracy. It retrieves relevant context from a database or vector store before generating a response, making the model more factual and grounded.

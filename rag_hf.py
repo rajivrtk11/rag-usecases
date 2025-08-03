@@ -174,7 +174,7 @@ def ask_question(vectorstore, question: str):
     print("\n📚 Source Pages:", [doc.metadata["page"] for doc in result["source_documents"]])
 
 if __name__ == "__main__":
-    pdf_path = "rok-hjp-survind-kumar.pdf"
+    pdf_path = "document/IPCC_AR6_SYR_SPM.pdf"
     read_from_db = True
 
     if read_from_db:
@@ -194,6 +194,6 @@ if __name__ == "__main__":
         # "What was the Malta in 2017 for Chart II: Retail Trade?"
         # "What was the eu trade in 2011 for Chart II: Retail Trade?"
         # "what is malta house price index in 2017"
-        "give me journey summary"
+        "What this file is about? What are the main findings and conclusions?"
     )
 
